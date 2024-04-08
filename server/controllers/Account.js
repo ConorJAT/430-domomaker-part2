@@ -56,9 +56,40 @@ const signup = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const oldPass = `${req.body.oldPass}`;
+  const newPass = `${req.body.newPass}`;
+  const newPass2 = `${req.body.newPass2}`;
+
+  if (!oldPass || !newPass || !newPass2) {
+    return res.status(400).json({ error: 'All fields are required!' });
+  }
+
+  if (oldPass === newPass) {
+    return res.status(400).json({ error: 'New password matches the current password!' });
+  }
+
+  if (newPass !== newPass2) {
+    return res.status(400).json({ error: 'New passwords do not match!' });
+  }
+
+  try {
+    const query = { _id: req.session.account._id };
+    const hash = await Account.generateHash(newPass);
+
+    await Account.updateOne(query, { $set: { password: hash } });
+    console.log('Password change successful.');
+    return res.json({ redirect: '/maker' });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error changing password!' });
+  }
+};
+
 module.exports = {
   loginPage,
   login,
   logout,
   signup,
+  changePassword,
 };

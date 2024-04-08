@@ -3,6 +3,48 @@ const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require('react-dom/client');
 
+const handlePasswordChange = (e) => {
+    e.preventDefault();
+    helper.hideError();
+
+    const oldPass = e.target.querySelector('#oldPass').value;
+    const newPass = e.target.querySelector('#newPass').value;
+    const newPass2 = e.target.querySelector('#newPass2').value;
+
+    if(!oldPass || !newPass || !newPass2) {
+        helper.handleError('All fields are required for password change!');
+        return false;
+    }
+
+    if(newPass !== newPass2) {
+        helper.handleError('New passwords do not match!');
+        return false;
+    }
+
+    helper.sendPost(e.target.action, {oldPass, newPass, newPass2});
+    return false;
+};
+
+const PasswordChangeForm = (props) => {
+    return (
+        <form id="passChangeForm"
+            name="passChangeForm"
+            onSubmit={handlePasswordChange}
+            action="/changePassword"
+            method="POST"
+            className="mainForm"
+        >
+            <label htmlFor="oldPass">Old Password: </label>
+            <input type="text" id="oldPass" name="oldPass" placeholder="Enter Old Password"/>
+            <label htmlFor="newPass">New Password: </label>
+            <input type="password" id="newPass" name="newPass" placeholder="Enter New Password"/>
+            <label htmlFor="newPass2">Retype New Password: </label>
+            <input type="password" id="newPass2" name="newPass2" placeholder="Retype New Password"/>
+            <input type="submit" className="formSubmit" value="Change Password"/>
+        </form>
+    );
+};
+
 const handleDomo = (e, onDomoAdded) => {
     e.preventDefault();
     helper.hideError();
@@ -94,7 +136,22 @@ const App = () => {
 };
 
 const init = () => {
+    const displayDomos = document.getElementById('displayDomos');
+    const changePassword = document.getElementById('changePass');
+
     const root = createRoot(document.getElementById('app'));
+    displayDomos.addEventListener('click', (e) => {
+        e.preventDefault();
+        root.render( <App/> );
+        return false;
+    });
+
+    changePassword.addEventListener('click', (e) => {
+        e.preventDefault();
+        root.render( <PasswordChangeForm/> );
+        return false;
+    });
+
     root.render( <App/> );
 };
 
