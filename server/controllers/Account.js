@@ -11,7 +11,7 @@ const logout = (req, res) => {
 
 const login = (req, res) => {
   const username = `${req.body.username}`;
-  const pass = `${req.body.pass}`;
+  const pass = `${req.body.password}`;
 
   if (!username || !pass) {
     return res.status(400).json({ error: 'All fields are required!' });
@@ -30,8 +30,8 @@ const login = (req, res) => {
 
 const signup = async (req, res) => {
   const username = `${req.body.username}`;
-  const pass = `${req.body.pass}`;
-  const pass2 = `${req.body.pass2}`;
+  const pass = `${req.body.password}`;
+  const pass2 = `${req.body.password2}`;
 
   if (!username || !pass || !pass2) {
     return res.status(400).json({ error: 'All fields are required!' });
@@ -57,6 +57,8 @@ const signup = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
+  console.log(req.body);
+  
   const oldPass = `${req.body.oldPass}`;
   const newPass = `${req.body.newPass}`;
   const newPass2 = `${req.body.newPass2}`;
@@ -77,7 +79,7 @@ const changePassword = async (req, res) => {
     const query = { _id: req.session.account._id };
     const hash = await Account.generateHash(newPass);
 
-    await Account.updateOne(query, { $set: { password: hash } });
+    await Account.findByIdAndUpdate(req.session.account._id, { password: hash });
     console.log('Password change successful.');
     return res.json({ redirect: '/maker' });
   } catch (err) {

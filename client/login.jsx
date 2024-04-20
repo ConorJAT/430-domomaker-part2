@@ -36,7 +36,7 @@ const handleSignUp = (e) => {
         return false;
     }
 
-    helper.sendPost(e.target.action, {username, password});
+    helper.sendPost(e.target.action, {username, password, password2});
     return false;
 };
 
