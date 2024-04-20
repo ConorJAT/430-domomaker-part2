@@ -58,7 +58,7 @@ const signup = async (req, res) => {
 
 const changePassword = async (req, res) => {
   console.log(req.body);
-  
+
   const oldPass = `${req.body.oldPass}`;
   const newPass = `${req.body.newPass}`;
   const newPass2 = `${req.body.newPass2}`;
@@ -76,7 +76,6 @@ const changePassword = async (req, res) => {
   }
 
   try {
-    const query = { _id: req.session.account._id };
     const hash = await Account.generateHash(newPass);
 
     await Account.findByIdAndUpdate(req.session.account._id, { password: hash });
